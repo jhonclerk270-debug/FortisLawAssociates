@@ -1,0 +1,6 @@
+{
+  "name": "Corporate Law Firm & Legal Consultation Platform",
+  "description": "Premier full-stack legal consultation platform with administrative dashboard, appointment scheduling, practice area insights, multi-city offices, and automated inquiry routing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
