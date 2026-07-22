@@ -236,7 +236,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
             <div>
               <h3 className="font-heading text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-                <span>Kakakhel Law Chambers Admin Portal</span>
+                <span>Fortis Law & Associates Chambers Admin Portal</span>
                 <span className="text-[10px] bg-[#D4AF37]/20 text-[#D4AF37] px-2 py-0.5 rounded font-sans uppercase">
                   Protected System
                 </span>
@@ -624,7 +624,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   type="text"
                   value={assignedPartnerInput}
                   onChange={(e) => setAssignedPartnerInput(e.target.value)}
-                  placeholder="e.g. Adv. Barrister M. Kakakhel"
+                  placeholder="e.g. Adv . Majid Usman"
                   className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-[#D4AF37]"
                 />
               </div>
