@@ -13,23 +13,26 @@ async function startServer() {
 
   // Backend API route for secure admin authentication
   app.post('/api/admin/login', (req, res) => {
-    const { email, password } = req.body;
+    const { email, password } = req.body || {};
 
-    const adminEmail = process.env.ADMIN_EMAIL || 'excuses.heckles.94@icloud.com';
-    const adminPassword = process.env.ADMIN_PASSWORD || 'Sd2-@3cd-eas(*&8mss_s0';
+    const rawAdminEmail = process.env.ADMIN_EMAIL || 'excuses.heckles.94@icloud.com';
+    const rawAdminPassword = process.env.ADMIN_PASSWORD || 'Sd2-@3cd-eas(*&8mss_s0';
 
-    if (!email || !password) {
-      return res.status(401).json({
-        success: false,
-        error: 'Failed to Access',
-        subError: 'Add correct Credentials'
-      });
-    }
+    // Sanitize target credentials (remove surrounding quotes & trim)
+    const targetEmail = rawAdminEmail.replace(/^["']|["']$/g, '').trim().toLowerCase();
+    const targetPassword = rawAdminPassword.replace(/^["']|["']$/g, '').trim();
 
-    const cleanEmail = String(email).trim().toLowerCase();
-    const targetEmail = adminEmail.trim().toLowerCase();
+    // Sanitize user input (remove surrounding quotes & trim)
+    const cleanEmail = String(email || '').replace(/^["']|["']$/g, '').trim().toLowerCase();
+    const cleanPassword = String(password || '').replace(/^["']|["']$/g, '').trim();
 
-    if (cleanEmail === targetEmail && password === adminPassword) {
+    const isMatch = cleanEmail === targetEmail && cleanPassword === targetPassword;
+
+    console.log(`[SERVER AUTH LOG] Input Email: "${cleanEmail}" | Expected Email: "${targetEmail}"`);
+    console.log(`[SERVER AUTH LOG] Input Password Length: ${cleanPassword.length} | Expected Password Length: ${targetPassword.length}`);
+    console.log(`[SERVER AUTH LOG] Match Result: ${isMatch}`);
+
+    if (isMatch) {
       return res.json({
         success: true,
         message: 'Authentication successful',
