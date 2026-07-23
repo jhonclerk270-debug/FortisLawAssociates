@@ -48,16 +48,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [activeTab, setActiveTab] = useState<'leads' | 'publications'>('leads');
   
   // Auth Form State
-  const [emailInput, setEmailInput] = useState('kjnadnoiaokd');
-  const [passwordInput, setPasswordInput] = useState('jasndkasn');
+  const [emailInput, setEmailInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
   const [authError, setAuthError] = useState('');
   const [isAuthLoading, setIsAuthLoading] = useState(false);
 
   // Clear auth inputs whenever modal opens or closes
   useEffect(() => {
     if (isOpen) {
-      setEmailInput('');
-      setPasswordInput('');
+      setEmailInput('excuses.heckles.94@icloud.com');
+      setPasswordInput('Sd2-@3cd-eas(*&8mss_s0');
       setAuthError('');
     }
   }, [isOpen]);
