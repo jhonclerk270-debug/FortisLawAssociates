@@ -113,34 +113,28 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   if (!isOpen) return null;
 
   // Handle Login
-  const handleLogin = async (e: React.FormEvent) => {
+const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError('');
     setIsAuthLoading(true);
 
+    if (!auth) {
+      setAuthError('Authentication service is unavailable. Please try again later.');
+      setIsAuthLoading(false);
+      return;
+    }
+
     try {
-      if (auth) {
-        await signInWithEmailAndPassword(auth, emailInput, passwordInput);
-        setIsAdminLoggedIn(true);
-      } else {
-        // Fallback demo access if auth SDK unavailable
-        setIsAdminLoggedIn(true);
-      }
+      await signInWithEmailAndPassword(auth, emailInput, passwordInput);
+      // Do NOT set isAdminLoggedIn here directly.
+      // Let onAuthStateChanged (below) confirm the session AND verify
+      // the admin custom claim before granting dashboard access.
     } catch (err: any) {
-      console.warn("Auth error, permitting demo access:", err);
-      // For demo resilience, allow login if evaluator uses default credentials
-      if (emailInput.length > 3) {
-        setIsAdminLoggedIn(true);
-      } else {
-        setAuthError(err.message || 'Invalid admin credentials');
-      }
+      console.warn('Auth error:', err.code);
+      setAuthError('Invalid email or password.');
     } finally {
       setIsAuthLoading(false);
     }
-  };
-
-  const handleDemoAccess = () => {
-    setIsAdminLoggedIn(true);
   };
 
   const handleLogout = async () => {
