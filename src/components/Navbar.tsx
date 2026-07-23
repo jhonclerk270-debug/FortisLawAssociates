@@ -17,17 +17,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenBooking, onOpenAdmin, isAd
   return (
     <header className="sticky top-0 z-40 bg-[#0B192C] text-slate-100 shadow-xl border-b border-[#D4AF37]/30">
       {/* Main Brand & Navigation */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
-        {/* Brand Logo & Name - Clicking Logo Triggers Admin Portal */}
-        <button 
-          onClick={onOpenAdmin}
-          type="button"
-          className="flex items-center gap-3 group text-left focus:outline-none"
-          title="Fortis Law Associates"
-        >
-          <div className="w-10 h-10 rounded-xl bg-[#0B192C] border-2 border-[#D4AF37] flex items-center justify-center shrink-0 shadow-lg group-hover:bg-[#162a42] group-hover:border-amber-300 group-hover:scale-105 transition-all">
-            <span className="text-[#D4AF37] font-serif text-2xl font-black">F</span>
-          </div>
+  
           <div>
             <div className="font-serif font-bold text-lg sm:text-xl leading-tight tracking-tight text-white group-hover:text-amber-100 transition-colors">
               FORTIS LAW ASSOCIATES
