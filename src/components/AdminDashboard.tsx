@@ -48,8 +48,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [activeTab, setActiveTab] = useState<'leads' | 'publications'>('leads');
   
   // Auth Form State
-  const [emailInput, setEmailInput] = useState('');
-  const [passwordInput, setPasswordInput] = useState('');
+  const [emailInput, setEmailInput] = useState('kjnadnoiaokd');
+  const [passwordInput, setPasswordInput] = useState('jasndkasn');
   const [authError, setAuthError] = useState('');
   const [isAuthLoading, setIsAuthLoading] = useState(false);
 
