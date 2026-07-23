@@ -160,20 +160,28 @@ const handleLogin = async (e: React.FormEvent) => {
   };
 
   // Export CSV
+ // Prevents CSV/formula injection when files are opened in Excel/Sheets
+  const sanitizeCSVField = (value: string): string => {
+    if (!value) return '';
+    const risky = /^[=+\-@\t\r]/;
+    const safe = risky.test(value) ? `'${value}` : value;
+    return safe.replace(/"/g, '""');
+  };
+
   const handleExportCSV = () => {
     const headers = ['Ref ID', 'Client Name', 'Company', 'Email', 'Phone', 'Practice Area', 'Location', 'Date', 'Urgent', 'Status', 'Assigned Partner'];
     const rows = inquiries.map(i => [
-      i.referenceId,
-      `"${i.clientName}"`,
-      `"${i.companyName || ''}"`,
-      i.clientEmail,
-      i.clientPhone,
-      `"${i.practiceAreaTitle}"`,
-      i.locationCity,
-      i.preferredDate,
+      sanitizeCSVField(i.referenceId),
+      `"${sanitizeCSVField(i.clientName)}"`,
+      `"${sanitizeCSVField(i.companyName || '')}"`,
+      sanitizeCSVField(i.clientEmail),
+      sanitizeCSVField(i.clientPhone),
+      `"${sanitizeCSVField(i.practiceAreaTitle)}"`,
+      sanitizeCSVField(i.locationCity),
+      sanitizeCSVField(i.preferredDate),
       i.isUrgent ? 'YES' : 'NO',
       i.status.toUpperCase(),
-      `"${i.assignedPartner || ''}"`
+      `"${sanitizeCSVField(i.assignedPartner || '')}"`
     ]);
 
     const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
