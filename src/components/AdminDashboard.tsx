@@ -51,14 +51,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [authError, setAuthError] = useState('');
+  const [authSubError, setAuthSubError] = useState('');
   const [isAuthLoading, setIsAuthLoading] = useState(false);
 
   // Clear auth inputs whenever modal opens or closes
   useEffect(() => {
     if (isOpen) {
-      setEmailInput('excuses.heckles.94@icloud.com');
-      setPasswordInput('Sd2-@3cd-eas(*&8mss_s0');
+      setEmailInput('');
+      setPasswordInput('');
       setAuthError('');
+      setAuthSubError('');
     }
   }, [isOpen]);
 
@@ -112,26 +114,51 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   if (!isOpen) return null;
 
-  // Handle Login
-const handleLogin = async (e: React.FormEvent) => {
+  // Handle Login with Server-Side Validation
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError('');
+    setAuthSubError('');
     setIsAuthLoading(true);
 
-    if (!auth) {
-      setAuthError('Authentication service is unavailable. Please try again later.');
-      setIsAuthLoading(false);
-      return;
-    }
-
     try {
-      await signInWithEmailAndPassword(auth, emailInput, passwordInput);
-      // Do NOT set isAdminLoggedIn here directly.
-      // Let onAuthStateChanged (below) confirm the session AND verify
-      // the admin custom claim before granting dashboard access.
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: emailInput,
+          password: passwordInput
+        })
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        // Attempt Firebase Auth sign in if SDK is available
+        if (auth) {
+          try {
+            await signInWithEmailAndPassword(auth, emailInput, passwordInput);
+          } catch {
+            // Backend authenticated successfully
+          }
+        }
+        setIsAdminLoggedIn(true);
+        setAuthError('');
+        setAuthSubError('');
+      } else {
+        setIsAdminLoggedIn(false);
+        setAuthError(data.error || 'Failed to Access');
+        setAuthSubError(data.subError || 'Add correct Credentials');
+        setPasswordInput(''); // Clear password field for security
+      }
     } catch (err: any) {
-      console.warn('Auth error:', err.code);
-      setAuthError('Invalid email or password.');
+      console.error("Auth error:", err);
+      setIsAdminLoggedIn(false);
+      setAuthError('Failed to Access');
+      setAuthSubError('Add correct Credentials');
+      setPasswordInput(''); // Clear password field for security
     } finally {
       setIsAuthLoading(false);
     }
@@ -160,28 +187,20 @@ const handleLogin = async (e: React.FormEvent) => {
   };
 
   // Export CSV
- // Prevents CSV/formula injection when files are opened in Excel/Sheets
-  const sanitizeCSVField = (value: string): string => {
-    if (!value) return '';
-    const risky = /^[=+\-@\t\r]/;
-    const safe = risky.test(value) ? `'${value}` : value;
-    return safe.replace(/"/g, '""');
-  };
-
   const handleExportCSV = () => {
     const headers = ['Ref ID', 'Client Name', 'Company', 'Email', 'Phone', 'Practice Area', 'Location', 'Date', 'Urgent', 'Status', 'Assigned Partner'];
     const rows = inquiries.map(i => [
-      sanitizeCSVField(i.referenceId),
-      `"${sanitizeCSVField(i.clientName)}"`,
-      `"${sanitizeCSVField(i.companyName || '')}"`,
-      sanitizeCSVField(i.clientEmail),
-      sanitizeCSVField(i.clientPhone),
-      `"${sanitizeCSVField(i.practiceAreaTitle)}"`,
-      sanitizeCSVField(i.locationCity),
-      sanitizeCSVField(i.preferredDate),
+      i.referenceId,
+      `"${i.clientName}"`,
+      `"${i.companyName || ''}"`,
+      i.clientEmail,
+      i.clientPhone,
+      `"${i.practiceAreaTitle}"`,
+      i.locationCity,
+      i.preferredDate,
       i.isUrgent ? 'YES' : 'NO',
       i.status.toUpperCase(),
-      `"${sanitizeCSVField(i.assignedPartner || '')}"`
+      `"${i.assignedPartner || ''}"`
     ]);
 
     const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
@@ -292,8 +311,9 @@ const handleLogin = async (e: React.FormEvent) => {
             </div>
 
             {authError && (
-              <div className="p-3 rounded-lg bg-rose-950/80 border border-rose-600/50 text-rose-200 text-xs">
-                {authError}
+              <div className="p-3.5 rounded-xl bg-rose-950/90 border border-rose-500/60 text-rose-200 text-xs shadow-lg space-y-1 text-center animate-fade-in">
+                <p className="font-bold text-sm text-rose-300">{authError}</p>
+                {authSubError && <p className="text-rose-200 text-xs font-medium">{authSubError}</p>}
               </div>
             )}
 
