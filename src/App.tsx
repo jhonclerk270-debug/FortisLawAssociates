@@ -9,6 +9,7 @@ import { BookingModal } from './components/BookingModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { Footer } from './components/Footer';
 import { JsonLdSchema } from './components/JsonLdSchema';
+import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 
 export default function App() {
   // Modal states
@@ -68,6 +69,9 @@ export default function App() {
 
       {/* Footer */}
       <Footer />
+
+      {/* Floating WhatsApp Action Button */}
+      <FloatingWhatsApp />
 
       {/* Appointment & Consultation Booking Modal */}
       <BookingModal

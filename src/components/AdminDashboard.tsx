@@ -48,10 +48,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const [activeTab, setActiveTab] = useState<'leads' | 'publications'>('leads');
   
   // Auth Form State
-  const [emailInput, setEmailInput] = useState('excuses.heckles.94@icloud.com');
-  const [passwordInput, setPasswordInput] = useState('Sd2-@3cd-eas(*&8mss_s0');
+  const [emailInput, setEmailInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
   const [authError, setAuthError] = useState('');
   const [isAuthLoading, setIsAuthLoading] = useState(false);
+
+  // Clear auth inputs whenever modal opens or closes
+  useEffect(() => {
+    if (isOpen) {
+      setEmailInput('');
+      setPasswordInput('');
+      setAuthError('');
+    }
+  }, [isOpen]);
 
   // Consultations State
   const [inquiries, setInquiries] = useState<ConsultationInquiry[]>([]);
@@ -236,7 +245,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
             </div>
             <div>
               <h3 className="font-heading text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-                <span>Fortis Law & Associates Chambers Admin Portal</span>
+                <span>Fortis Law Associates Admin Portal</span>
                 <span className="text-[10px] bg-[#D4AF37]/20 text-[#D4AF37] px-2 py-0.5 rounded font-sans uppercase">
                   Protected System
                 </span>
@@ -286,12 +295,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
             )}
 
-            <form onSubmit={handleLogin} className="space-y-4 text-left text-xs">
+            <form onSubmit={handleLogin} className="space-y-4 text-left text-xs" autoComplete="off">
               <div>
                 <label className="block text-slate-300 font-semibold mb-1">Admin Email</label>
                 <input
                   type="email"
                   required
+                  autoComplete="off"
+                  placeholder="Enter administrator email"
                   value={emailInput}
                   onChange={(e) => setEmailInput(e.target.value)}
                   className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-[#D4AF37]"
@@ -303,6 +314,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <input
                   type="password"
                   required
+                  autoComplete="new-password"
+                  placeholder="Enter password"
                   value={passwordInput}
                   onChange={(e) => setPasswordInput(e.target.value)}
                   className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-[#D4AF37]"
@@ -312,22 +325,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               <button
                 type="submit"
                 disabled={isAuthLoading}
-                className="w-full py-3 rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#B89628] text-[#0B192C] font-extrabold text-xs tracking-wider uppercase shadow-lg hover:brightness-110"
+                className="w-full py-3 rounded-lg bg-gradient-to-r from-[#D4AF37] to-[#B89628] text-[#0B192C] font-extrabold text-xs tracking-wider uppercase shadow-lg hover:brightness-110 active:scale-98 transition-all"
               >
                 {isAuthLoading ? 'Authenticating...' : 'Sign In To Portal'}
               </button>
             </form>
-
-            <div className="pt-4 border-t border-slate-800">
-              <button
-                type="button"
-                onClick={handleDemoAccess}
-                className="w-full py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-semibold text-xs border border-slate-700 flex items-center justify-center gap-2"
-              >
-                <UserCheck className="w-4 h-4 text-emerald-400" />
-                <span>Instant Demo Admin Access (Evaluators)</span>
-              </button>
-            </div>
           </div>
         ) : (
           /* LOGGED IN ADMIN DASHBOARD PANEL */
@@ -624,7 +626,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   type="text"
                   value={assignedPartnerInput}
                   onChange={(e) => setAssignedPartnerInput(e.target.value)}
-                  placeholder="e.g. Adv . Majid Usman"
+                  placeholder="e.g. Adv. Barrister M. Kakakhel"
                   className="w-full p-2.5 rounded-lg bg-slate-900 border border-slate-700 text-white focus:outline-none focus:border-[#D4AF37]"
                 />
               </div>
